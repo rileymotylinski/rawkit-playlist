@@ -28,18 +28,18 @@ def compile_track_ids(tracks):
 def clear_playlist(user,playlist_id):
     spotify.user_playlist_remove_all_occurrences_of_tracks(user=user,playlist_id=playlist_id,tracks=[item["track"]["uri"] for item in spotify.user_playlist_tracks(user=user,playlist_id=playlist_id)["items"]])
 
-def create_playlist(user): 
+def create_playlist(user, name, description): 
     user_playlists = spotify.user_playlists(user=user, limit=50, offset=0)["items"]
     for playlist in user_playlists:
-        if playlist["name"] == "rawkit":            
+        if playlist["name"] == name:            
             return playlist["id"]
  
-    spotify.user_playlist_create(user=user,name="rawkit", description="automatically updating playlist with the top 10 songs from rawkit.com")
+    spotify.user_playlist_create(user=user,name=name, description=description)
     create_playlist(user)
 
-def update_playlist(songs):
+def update_playlist(name, description, songs):
     # checking if playlist exists - creating if it doesn't already
-    playlist_id = create_playlist(user_id)
+    playlist_id = create_playlist(user_id, name, description)
 
     # clearing playlist
     clear_playlist(user_id,playlist_id)
@@ -48,4 +48,4 @@ def update_playlist(songs):
     spotify.user_playlist_add_tracks(user=user_id,playlist_id=playlist_id,tracks=compile_track_ids(songs))
 
 if __name__ == "__main__":
-    update_playlist([{"artist_name":"radiohead","song_name" : "weird fishes"}])
+    update_playlist("rawkit", "automatically updating playlist with the top 10 songs from rawkit.com", [{"artist_name":"radiohead","song_name" : "weird fishes"}])
