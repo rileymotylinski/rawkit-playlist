@@ -35,7 +35,7 @@ def create_playlist(user, name, description):
             return playlist["id"]
  
     spotify.user_playlist_create(user=user,name=name, description=description)
-    create_playlist(user)
+    create_playlist(user, name, description)
 
 def update_playlist(name, description, songs):
     # checking if playlist exists - creating if it doesn't already
