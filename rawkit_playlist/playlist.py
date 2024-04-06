@@ -21,8 +21,11 @@ def compile_track_ids(tracks):
 
     playlist_ids = []
     for track_info in tracks:
-        results = spotify.search(q=f"{ track_info['artist_name'] },{ track_info['song_name'] }")["tracks"]["items"][0]["uri"]
-        playlist_ids += [results]
+        results = spotify.search(q=f"{ track_info['artist_name'] },{ track_info['song_name'] }")["tracks"]["items"]
+        
+        if len(results) > 0:
+            playlist_ids.append(results[0]["uri"])
+
     return playlist_ids
 
 def clear_playlist(user,playlist_id):
