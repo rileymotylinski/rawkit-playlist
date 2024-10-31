@@ -1,9 +1,12 @@
-
+import logging
 import spotipy
 from dotenv import load_dotenv
 from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
+
+logging.basicConfig(level=logging.DEBUG)
+logger=logging.getLogger(__name__)
 
 # authenticating
 scope = "playlist-modify-public user-library-read"
@@ -29,7 +32,10 @@ def compile_track_ids(tracks):
     return playlist_ids
 
 def clear_playlist(user,playlist_id):
-    spotify.user_playlist_remove_all_occurrences_of_tracks(user=user,playlist_id=playlist_id,tracks=[item["track"]["uri"] for item in spotify.user_playlist_tracks(user=user,playlist_id=playlist_id)["items"]])
+    tracks = [item["track"]["uri"] for item in spotify.user_playlist_tracks(user=user,playlist_id=playlist_id)["items"]]
+    logger.debug("clear_playlist: count of tracks to be removed: {0}".format(len(tracks)))
+    if len(tracks) > 0:
+        spotify.user_playlist_remove_all_occurrences_of_tracks(user=user,playlist_id=playlist_id,tracks=tracks)
 
 def create_playlist(user, name, description): 
     user_playlists = spotify.user_playlists(user=user, limit=50, offset=0)["items"]
@@ -48,7 +54,11 @@ def update_playlist(name, description, songs):
     clear_playlist(user_id,playlist_id)
     
     # adding the tracks ids of the songs to the rawkit playlist
-    spotify.user_playlist_add_tracks(user=user_id,playlist_id=playlist_id,tracks=compile_track_ids(songs))
+    tracks=compile_track_ids(songs)
+    logger.debug("update_playlist: count of tracks to be added: {0}".format(len(tracks)))
+    if len(tracks) > 0:
+        spotify.user_playlist_add_tracks(user=user_id,playlist_id=playlist_id,tracks=tracks)
 
 if __name__ == "__main__":
+
     update_playlist("rawkit", "automatically updating playlist with the top 10 songs from rawkit.com", [{"artist_name":"radiohead","song_name" : "weird fishes"}])
