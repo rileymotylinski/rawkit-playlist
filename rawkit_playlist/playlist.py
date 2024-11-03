@@ -5,7 +5,6 @@ from spotipy.oauth2 import SpotifyOAuth
 
 load_dotenv()
 
-logging.basicConfig(level=logging.DEBUG)
 logger=logging.getLogger(__name__)
 
 # authenticating
@@ -33,7 +32,7 @@ def compile_track_ids(tracks):
 
 def clear_playlist(user,playlist_id):
     tracks = [item["track"]["uri"] for item in spotify.user_playlist_tracks(user=user,playlist_id=playlist_id)["items"]]
-    logger.debug("clear_playlist: count of tracks to be removed: {0}".format(len(tracks)))
+    logger.info("clear_playlist: count of tracks to be removed: {0}".format(len(tracks)))
     if len(tracks) > 0:
         spotify.user_playlist_remove_all_occurrences_of_tracks(user=user,playlist_id=playlist_id,tracks=tracks)
 
@@ -55,7 +54,7 @@ def update_playlist(name, description, songs):
     
     # adding the tracks ids of the songs to the rawkit playlist
     tracks=compile_track_ids(songs)
-    logger.debug("update_playlist: count of tracks to be added: {0}".format(len(tracks)))
+    logger.info("update_playlist: count of tracks to be added: {0}".format(len(tracks)))
     if len(tracks) > 0:
         spotify.user_playlist_add_tracks(user=user_id,playlist_id=playlist_id,tracks=tracks)
 
