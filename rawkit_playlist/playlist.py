@@ -21,9 +21,12 @@ def compile_track_ids(tracks):
 
     playlist_ids = []
     for track_info in tracks:
+        logging.info("compile_track_ids: searching for: {0} {1}".format(track_info['artist_name'], track_info['song_name']))
+
         results = spotify.search(q=f"{ track_info['artist_name'] },{ track_info['song_name'] }")["tracks"]["items"]
         
         if len(results) > 0:
+            logging.info("compile_track_ids: found: {0} {1} with uri:{2}".format(track_info['artist_name'], track_info['song_name'], results[0]["uri"]))
             playlist_ids.append(results[0]["uri"])
 
     return playlist_ids
